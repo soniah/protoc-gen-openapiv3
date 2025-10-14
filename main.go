@@ -7,7 +7,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/sapk/protoc-gen-openapiv3/generator"
+	"github.com/soniah/protoc-gen-openapiv3/generator"
 
 	"google.golang.org/protobuf/compiler/protogen"
 	"google.golang.org/protobuf/types/pluginpb"

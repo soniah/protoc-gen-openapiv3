@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	v2options "github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2/options"
-	"github.com/sapk/protoc-gen-openapiv3/options"
+	"github.com/soniah/protoc-gen-openapiv3/options"
 )
 
 // convertV2ToV3 converts OpenAPI v2 annotations to v3 format

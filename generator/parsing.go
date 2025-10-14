@@ -8,7 +8,7 @@ import (
 	"google.golang.org/protobuf/proto"
 
 	v2options "github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2/options"
-	"github.com/sapk/protoc-gen-openapiv3/options"
+	"github.com/soniah/protoc-gen-openapiv3/options"
 )
 
 // ParsedFile represents the parsed proto file with all necessary information

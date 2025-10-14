@@ -7,7 +7,7 @@ import (
 	"github.com/pb33f/libopenapi/datamodel/high/base"
 	high "github.com/pb33f/libopenapi/datamodel/high/v3"
 	"github.com/pb33f/libopenapi/orderedmap"
-	"github.com/sapk/protoc-gen-openapiv3/options"
+	"github.com/soniah/protoc-gen-openapiv3/options"
 	"gopkg.in/yaml.v3"
 )
 

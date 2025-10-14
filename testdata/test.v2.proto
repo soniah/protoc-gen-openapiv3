@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package test.package;
 
-option go_package = "github.com/sapk/protoc-gen-openapiv3/testdata;testdata";
+option go_package = "github.com/soniah/protoc-gen-openapiv3/testdata;testdata";
 
 // Import required protobuf types
 import "google/protobuf/empty.proto";

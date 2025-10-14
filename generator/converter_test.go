@@ -5,8 +5,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/sapk/protoc-gen-openapiv3/generator"
-	"github.com/sapk/protoc-gen-openapiv3/options"
+	"github.com/soniah/protoc-gen-openapiv3/generator"
+	"github.com/soniah/protoc-gen-openapiv3/options"
 )
 
 func TestConvertToOpenAPI(t *testing.T) {

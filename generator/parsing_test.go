@@ -13,7 +13,7 @@ import (
 	"google.golang.org/protobuf/types/descriptorpb"
 	"google.golang.org/protobuf/types/pluginpb"
 
-	"github.com/sapk/protoc-gen-openapiv3/generator"
+	"github.com/soniah/protoc-gen-openapiv3/generator"
 )
 
 func TestParseProtoFile(t *testing.T) {

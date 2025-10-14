@@ -30,7 +30,7 @@ The following features are not yet supported:
 ## Installation
 
 ```bash
-go install github.com/sapk/protoc-gen-openapiv3@latest
+go install github.com/soniah/protoc-gen-openapiv3@latest
 ```
 
 ## Usage

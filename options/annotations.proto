@@ -5,7 +5,7 @@ package protoc_gen_openapiv3.options;
 import "google/protobuf/descriptor.proto";
 import "protoc-gen-openapiv3/options/openapiv3.proto";
 
-option go_package = "github.com/sapk/protoc-gen-openapiv3/options";
+option go_package = "github.com/soniah/protoc-gen-openapiv3/options";
 
 // FileOptions represents the OpenAPI object options for a proto file.
 extend google.protobuf.FileOptions {
