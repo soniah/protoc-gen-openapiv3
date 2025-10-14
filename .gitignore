@@ -31,3 +31,5 @@ Thumbs.db
 # Generated files that should be tracked
 !testdata/test.openapi.yaml
 !testdata/test.v2.openapi.yaml
+
+exe
