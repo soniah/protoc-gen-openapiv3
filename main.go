@@ -7,6 +7,7 @@ import (
 	"os"
 	"strings"
 
+	high "github.com/pb33f/libopenapi/datamodel/high/v3"
 	"github.com/soniah/protoc-gen-openapiv3/generator"
 
 	"google.golang.org/protobuf/compiler/protogen"
@@ -51,8 +52,7 @@ func main() {
 		// Debug log the parsed flags
 		log.Printf("Parsed flags - output: %s, format: %s", *outputFile, *outputFormat)
 
-		// Create a new OpenAPI generator
-		generator := generator.NewOpenAPIGenerator(gen, &generator.Options{
+		openAPIGenerator := generator.NewOpenAPIGenerator(gen, &generator.Options{
 			AllowMerge:           *allowMerge,
 			IncludePackageInTags: *includePkgInTags,
 			FQNForOpenAPIName:    *fqnForOpenAPIName,
@@ -60,15 +60,21 @@ func main() {
 			OutputFormat:         generator.OutputFormat(*outputFormat),
 		})
 
-		// Process each proto file
+		var docs []*high.Document
 		for _, f := range gen.Files {
 			if f.Generate {
-				if err := generator.Generate(f); err != nil {
-					return fmt.Errorf("failed to generate OpenAPI spec for %s: %v", f.Desc.Path(), err)
+				doc, err := openAPIGenerator.Generate2(f)
+				if err != nil {
+					return fmt.Errorf("failed to generate OpenAPI high doc for %s: %v", f.Desc.Path(), err)
 				}
+				docs = append(docs, doc)
 			}
 		}
 
+		if len(docs) == 0 {
+			return fmt.Errorf("no OpenAPI high docs generated")
+		}
+		_, _ = generator.MergeDocuments(docs)
 		return nil
 	})
 }

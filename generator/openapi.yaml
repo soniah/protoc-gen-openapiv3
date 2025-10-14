@@ -1,0 +1,305 @@
+openapi: 3.1.0
+info:
+  title: aegis.service.aegisidentityview.v2
+  version: 1.0.0
+paths:
+  /create-identity-profile:
+    post:
+      tags:
+        - AegisIdentityViewService
+      summary: The Create identity profile service is used to create a new identity profile for a customer. The service is called by
+      description: |-
+        trusted internal clients to create a new identity profile for a customer.
+         The service validates the request, creates a new identity profile, and stores it in the identity store.
+         The API is synchronous in nature, however depending on the time required to create and sync profile creation in the Aegis platform, there could be 2 possible outcomes
+         1) If the IdentityProfile is created within a stipulated period of time (designated by the backend), then the response will return a IdentityProfile for the migration.
+         2) If the IdentityProfile is not created within a stipulated time, then a long-running operation is returned as a response with OperationsMetadata with a process name that can be queried through GetOperationStatus for the process status.
+         (-- api-linter: core::0133::response-message-name=disabled
+             aip.dev/not-precedent: Response has the resource along with long running operation info. --)
+         (-- api-linter: core::0133::http-uri-parent=disabled
+             aip.dev/not-precedent: All profiles are under IDM --)
+         Scope: https://aegis.anz.com/scopes/aegisidentityview:profile:migration:create - This scope is required to create a migration profile with system token
+         Scope: https://aegis.anz.com/scopes/aegisidentityview:profile:standard:create - This scope is required to create a standard profile with system token
+      operationId: CreateIdentityProfile
+      parameters: [ ]
+      responses:
+        "200":
+          description: Response for CreateIdentityProfile operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Operation'
+  /get-operation-status:
+    post:
+      tags:
+        - AegisIdentityViewService
+      summary: Get the current state for a long running operation.
+      description: |-
+        The operation ID is the one returned as part of a previous google.longrunning.Operation response
+         The Get Operation Status request may be made with the same token that created the operation, as the operation is expected to be resolved within seconds
+         If Operation status is COMPLETED, then the returned longrunning Operation type will contain the Identity Profile
+         (-- api-linter: core::0131::response-message-name=disabled
+             aip.dev/not-precedent: Response has the resource inside long running operation info. --)
+      operationId: GetOperationStatus
+      parameters: [ ]
+      responses:
+        "200":
+          description: Response for GetOperationStatus operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Operation'
+  /update-identity-profile:
+    post:
+      tags:
+        - AegisIdentityViewService
+      summary: The update identity profile service is used to update an existing identity profile for a customer. The service is called by
+      description: |-
+        trusted internal clients to update identity profile for a customer.
+         The service validates the request, updates it in the identity store.
+         The user search for update is based on the person_id defined in userJWT, systemRqfCustomer, or staffRqfCustomer token.
+         Non-listed token types are not supported and will result in an InvalidBearerToken 200_003 error.
+         (-- api-linter: core::0134::response-message-name=disabled
+             aip.dev/not-precedent: Response has the resource along with long running operation info. --)
+         Scope: https://aegis.anz.com/scopes/aegisidentityview:profile:write - This scope is required to access update rpc with token
+         Scope: https://aegis.anz.com/scopes/aegisidentityview:profile:<attribute_name>:write - This scope is required to update specific attribute of the profile
+         For more info around attribute scopes please refer to the attribute specific scopes in IdentityProfile object type
+      operationId: UpdateIdentityProfile
+      parameters: [ ]
+      responses:
+        "200":
+          description: Response for UpdateIdentityProfile operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdentityProfile'
+  /get-identity-profile:
+    post:
+      tags:
+        - AegisIdentityViewService
+      summary: Get Identity Profile returns the profile for the non-archived customer.
+      description: |-
+        The user search is based on the person_id defined in userJWT, systemRqfCustomer, or staffRqfCustomer token, so no input data required in request object.
+         Non-listed token types are not supported and will result in an InvalidBearerToken 200_003 error.
+         (-- api-linter: core::0131::response-message-name=disabled
+             aip.dev/not-precedent: Custom. --)
+         Scope: https://aegis.anz.com/scopes/aegisidentityview:profile:read - This scope provides basic set of attributes.
+         Scope: https://aegis.anz.com/scopes/aegisidentityview:profile:<attribute_name>:read - This scope is required to get the any specific controlled attribute data.
+         For more info around basic set of attributes and attribute scopes please refer to the attribute specific scopes in IdentityProfile object type.
+      operationId: GetIdentityProfile
+      parameters: [ ]
+      responses:
+        "200":
+          description: Response for GetIdentityProfile operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdentityProfile'
+  /find-identity-profiles:
+    post:
+      tags:
+        - AegisIdentityViewService
+      summary: Find the Identity profile resource using the listed search attributes using System Token without any RQF.
+      description: |-
+        FindIdentityProfiles will return only the basic set of attributes for the user of the identity profile if exists.
+         The search attributes are listed as part of the ListIdentityProfileRequest object and at least 1 attribute needs to be provided.
+         SystemRqfCustomer is not supported for this operation - Use /GetIdentityProfile for RQF based search.
+         Scope: https://aegis.anz.com/scopes/aegisidentityview:profile:read - This scope provides basic set of attributes.
+      operationId: FindIdentityProfiles
+      parameters: [ ]
+      responses:
+        "200":
+          description: Response for FindIdentityProfiles operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FindIdentityProfilesResponse'
+  /archive-identity-profile:
+    post:
+      tags:
+        - AegisIdentityViewService
+      summary: Archive Identity Profile is used to archive a user identity profile in aegis.
+      description: |-
+        It supports userJWT, systemRqfCustomer, or staffRqfCustomer token, so no input data required in request object as
+         token itself contains the personId to archive.
+         Non-listed token types are not supported and will result in an InvalidBearerToken 200_003 error.
+         Scope: https://aegis.anz.com/scopes/aegisidentityview:profile:archive - This scope archive the user identity profile in aegis.
+      operationId: ArchiveIdentityProfile
+      parameters: [ ]
+      responses:
+        "200":
+          description: Response for ArchiveIdentityProfile operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdentityProfile'
+  /padlock-identity-profile:
+    post:
+      tags:
+        - AegisIdentityViewService
+      summary: Padlock Digital Identity is used to padlock a user's identity profile in aegis.
+      description: |-
+        It supports userJWT, systemRqfCustomer, or staffRqfCustomer token, so no input data required in request object as
+         token itself contains the personId to padlock.
+         Non-listed token types are not supported and will result in an InvalidBearerToken 200_003 error.
+         Scope: https://aegis.anz.com/scopes/aegisidentityview:profile:padlock - This scope padlocks the user's digital identity in aegis.
+      operationId: PadlockIdentityProfile
+      parameters: [ ]
+      responses:
+        "200":
+          description: Response for PadlockIdentityProfile operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdentityProfile'
+  /delete-identity-profile:
+    post:
+      tags:
+        - AegisIdentityViewService
+      summary: The Delete identity profile service is used to delete an identity profile. The service is called by
+      description: |-
+        trusted internal clients to delete an identity profile.
+         The service validates the request and deletes an identity profile (if found).
+         The API is synchronous in nature, however depending on the time required to delete and sync profile deletion in the Aegis platform, there could be 2 possible outcomes
+         1) If the IdentityProfile is deleted within a stipulated period of time (designated by the backend), then the response will return an empty response.
+         2) If the IdentityProfile is not deleted within a stipulated time, then a long-running operation is returned as a response with OperationsMetadata with a process name that can be queried through GetOperationStatus for the process status.
+         Scope: https://aegis.anz.com/scopes/aegisidentityview:profile:delete - This scope is required to delete an identity profile
+         Non-listed token types are not supported and will result in an InvalidBearerToken 200_003 error.
+      operationId: DeleteIdentityProfile
+      parameters: [ ]
+      responses:
+        "200":
+          description: Response for DeleteIdentityProfile operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Operation'
+  /sync-person:
+    post:
+      tags:
+        - AegisIdentityViewService
+      summary: Sync Person is used to notify AIV for any update in User managed Object in IDM
+      operationId: SyncPerson
+      parameters: [ ]
+      responses:
+        "200":
+          description: Response for SyncPerson operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SyncPersonResponse'
+  /sync-persona:
+    post:
+      tags:
+        - AegisIdentityViewService
+      summary: Sync Persona is used to notify AIV for any update in Persona managed Object in IDM
+      operationId: SyncPersona
+      parameters: [ ]
+      responses:
+        "200":
+          description: Response for SyncPersona operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SyncPersonaResponse'
+  /force-sync-o-c-v:
+    post:
+      tags:
+        - AegisIdentityViewService
+      summary: 'ForceSyncToOCV syncs all potential fields to OCV, including:'
+      description: |-
+        - securityEmail
+          - securityMobile
+        
+          The user sync is based on the person_id defined in the systemRqfCustomer token, so no input data required in request object.
+        
+          Returns:
+            - 200_015 NotFound: if the user or OCV ID does not exist
+            - 200_002 Internal Server Error
+      operationId: ForceSyncOCV
+      parameters: [ ]
+      responses:
+        "200":
+          description: Response for ForceSyncOCV operation
+  /force-sync-i-d-m:
+    post:
+      tags:
+        - AegisIdentityViewService
+      summary: 'ForceSyncIDM syncs all potential fields to IDM from OCV, including:'
+      description: |-
+        - given_name
+         - sn (defined as family_name in our IdentityProfile resources)
+        
+         This sync is based on the person_id defined in the systemRqfCustomer token, so no input data required in request object.
+        
+          Returns:
+            - 200_015 NotFound: if the user or OCV ID does not exist in IDM
+            - 200_008 Internal Error
+            - 200_002 Internal Server Error
+      operationId: ForceSyncIDM
+      parameters: [ ]
+      responses:
+        "200":
+          description: Response for ForceSyncIDM operation
+  /create-persona:
+    post:
+      tags:
+        - AegisIdentityViewService
+      summary: CreatePersona adds a persona to an existing identity profile.
+      description: |-
+        It supports the systemRqfCustomer token only, and extracts person_id from the token.
+        
+          Returns:
+            - 200_015 NotFound: if the user does not exist in IDM
+            - 200_008 Internal Error: if DS sync fails
+            - 200_002 Internal Server Error: other errors
+         (-- api-linter: core::0133::http-uri-parent=disabled
+             aip.dev/not-precedent: do not support http api --)
+      operationId: CreatePersona
+      parameters: [ ]
+      responses:
+        "200":
+          description: Response for CreatePersona operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Persona'
+  /archive-persona:
+    post:
+      tags:
+        - AegisIdentityViewService
+      summary: ArchivePersona updates the persona status to archived for a given persona.
+      description: |-
+        If the given persona id is already archived, the service will respond with an already
+         exists. If the persona exists and the status is not archived,
+         it will be archived and the archived persona will be returned.
+        
+          Returns:
+            - 200_015 NotFound: if the persona does not exist in IDM
+            - 200_008 Internal Error
+            - 200_002 Internal Server Error
+            - 200018 Already exists
+      operationId: ArchivePersona
+      parameters: [ ]
+      responses:
+        "200":
+          description: Response for ArchivePersona operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Persona'
+components:
+  schemas:
+    Operation:
+      $ref: '#/components/schemas/Operation'
+    IdentityProfile:
+      $ref: '#/components/schemas/IdentityProfile'
+    FindIdentityProfilesResponse:
+      $ref: '#/components/schemas/FindIdentityProfilesResponse'
+    SyncPersonResponse:
+      $ref: '#/components/schemas/SyncPersonResponse'
+    SyncPersonaResponse:
+      $ref: '#/components/schemas/SyncPersonaResponse'
+    Persona:
+      $ref: '#/components/schemas/Persona'
+tags: [ ]

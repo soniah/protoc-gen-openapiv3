@@ -88,6 +88,33 @@ func (g *OpenAPIGenerator) Generate(file *protogen.File) error {
 	return nil
 }
 
+func (g *OpenAPIGenerator) Generate2(file *protogen.File) (*high.Document, error) {
+	// Parse the proto file
+	parsedFile, err := g.ParseProtoFile(file)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse proto file: %w", err)
+	}
+
+	// Temporary debug log of parsedFile until we implement the remaining steps
+	log.Printf("Parsed file details - Package: %s, Services: %d, Messages: %d, Enums: %d",
+		parsedFile.Package,
+		len(parsedFile.Services),
+		len(parsedFile.Messages),
+		len(parsedFile.Enums))
+
+	// TODO: Implement remaining steps using parsedFile
+	// 2. Extracting service definitions from parsedFile.Services
+	// 3. Processing HTTP annotations from parsedFile.Annotations
+
+	// 4. Generating OpenAPI paths and components using parsedFile.Messages and parsedFile.Enums
+	oapiDoc, err := ConvertToOpenAPI(parsedFile)
+	if err != nil {
+		return nil, fmt.Errorf("failed to convert to OpenAPI: %w", err)
+	}
+
+	return oapiDoc, nil
+}
+
 // writeOutput writes the OpenAPI document to either stdout or a file
 func (g *OpenAPIGenerator) writeOutput(doc *high.Document) error {
 	var writer io.Writer
